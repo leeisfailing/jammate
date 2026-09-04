@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-logout-spotify"
+description = "Enables the logout_spotify command without any pre-configured scope."
+commands.allow = ["logout_spotify"]
+
+[[permission]]
+identifier = "deny-logout-spotify"
+description = "Denies the logout_spotify command without any pre-configured scope."
+commands.deny = ["logout_spotify"]
