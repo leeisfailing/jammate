@@ -43,12 +43,13 @@ export function Members() {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "8px",
-                padding: "8px 12px",
+                gap: "10px",
+                padding: "10px 12px",
                 borderRadius: "var(--radius-md)",
                 background: isCurrentUser
-                  ? "rgba(29, 185, 84, 0.05)"
+                  ? "var(--color-primary-dim)"
                   : "transparent",
+                transition: "background 0.15s",
               }}
             >
               <div
@@ -58,6 +59,7 @@ export function Members() {
                   borderRadius: "50%",
                   background: "var(--color-primary)",
                   flexShrink: 0,
+                  boxShadow: isCurrentUser ? "0 0 6px var(--color-glow)" : "none",
                 }}
               />
 

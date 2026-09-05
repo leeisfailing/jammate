@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { listen } from "@tauri-apps/api/event";
 import { useAuthStore } from "@/stores/authStore";
 import { useRoomStore } from "@/stores/roomStore";
 import { usePlayerStore } from "@/stores/playerStore";
@@ -47,6 +48,22 @@ export function DashboardPage() {
     };
 
     load();
+
+    const unlisten = listen<boolean>("spotify-auth-complete", async () => {
+      try {
+        const token = await getStoredSpotifyToken();
+        if (token) {
+          setSpotifyConnected(true);
+          setSpotifyAccessToken(token.access_token);
+        }
+      } catch {
+        // ignore
+      }
+    });
+
+    return () => {
+      unlisten.then((fn) => fn());
+    };
   }, [userId, setSpotifyAccessToken]);
 
   const handleCreateRoom = async () => {
@@ -99,14 +116,16 @@ export function DashboardPage() {
         maxWidth: "640px",
         margin: "0 auto",
         padding: "48px 24px",
+        animation: "fadeIn 0.3s ease-out",
       }}
     >
       <div style={{ marginBottom: "40px" }}>
         <h1
           style={{
-            fontSize: "24px",
-            fontWeight: 700,
-            marginBottom: "4px",
+            fontSize: "26px",
+            fontWeight: 800,
+            marginBottom: "6px",
+            letterSpacing: "-0.5px",
           }}
         >
           Welcome back
@@ -127,7 +146,7 @@ export function DashboardPage() {
         style={{
           display: "flex",
           gap: "12px",
-          marginBottom: "32px",
+          marginBottom: "36px",
         }}
       >
         <Button
@@ -185,18 +204,22 @@ export function DashboardPage() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  padding: "12px 16px",
-                  borderRadius: "var(--radius-md)",
+                  padding: "14px 16px",
+                  borderRadius: "var(--radius-lg)",
                   background: "var(--color-surface)",
                   border: "1px solid var(--color-border)",
                   cursor: "pointer",
-                  transition: "background 0.15s",
+                  transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = "var(--color-surface-hover)";
+                  e.currentTarget.style.borderColor = "var(--color-primary)";
+                  e.currentTarget.style.transform = "translateY(-1px)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.background = "var(--color-surface)";
+                  e.currentTarget.style.borderColor = "var(--color-border)";
+                  e.currentTarget.style.transform = "translateY(0)";
                 }}
               >
                 <div

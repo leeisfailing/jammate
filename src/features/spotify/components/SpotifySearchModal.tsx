@@ -90,14 +90,16 @@ export function SpotifySearchModal({ isOpen, onClose }: SpotifySearchModalProps)
             onClick={handleSearch}
             disabled={searching || !query.trim()}
             style={{
-              padding: "8px 16px",
+              padding: "10px 20px",
               borderRadius: "var(--radius-md)",
               background: "var(--color-primary)",
               color: "#000",
-              fontWeight: 500,
+              fontWeight: 600,
               fontSize: "14px",
               cursor: searching ? "not-allowed" : "pointer",
               opacity: searching || !query.trim() ? 0.5 : 1,
+              transition: "all 0.2s",
+              border: "none",
             }}
           >
             {searching ? "..." : "Search"}
@@ -133,9 +135,9 @@ export function SpotifySearchModal({ isOpen, onClose }: SpotifySearchModalProps)
                 display: "flex",
                 alignItems: "center",
                 gap: "12px",
-                padding: "8px",
+                padding: "10px 12px",
                 borderRadius: "var(--radius-md)",
-                transition: "background 0.15s",
+                transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = "var(--color-surface-hover)";
@@ -214,15 +216,16 @@ export function SpotifySearchModal({ isOpen, onClose }: SpotifySearchModalProps)
                 onClick={() => handleAdd(track)}
                 disabled={adding === track.id}
                 style={{
-                  padding: "6px 12px",
-                  borderRadius: "var(--radius-sm)",
+                  padding: "7px 14px",
+                  borderRadius: "var(--radius-md)",
                   background: adding === track.id ? "var(--color-surface)" : "var(--color-primary)",
                   color: adding === track.id ? "var(--color-text-muted)" : "#000",
-                  fontSize: "12px",
-                  fontWeight: 500,
+                  fontSize: "13px",
+                  fontWeight: 600,
                   cursor: adding === track.id ? "not-allowed" : "pointer",
                   flexShrink: 0,
                   border: "none",
+                  transition: "all 0.2s",
                 }}
               >
                 {adding === track.id ? "Adding..." : "+ Add"}

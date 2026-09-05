@@ -20,14 +20,14 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
       }}
     >
       {icon && (
-        <div style={{ fontSize: "32px", marginBottom: "12px" }}>{icon}</div>
+        <div style={{ fontSize: "40px", marginBottom: "16px", opacity: 0.6 }}>{icon}</div>
       )}
       <h3
         style={{
           fontSize: "16px",
           fontWeight: 600,
           color: "var(--color-text)",
-          marginBottom: "4px",
+          marginBottom: "6px",
         }}
       >
         {title}
@@ -37,7 +37,9 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
           style={{
             fontSize: "14px",
             color: "var(--color-text-muted)",
-            marginBottom: "16px",
+            marginBottom: "20px",
+            maxWidth: "280px",
+            lineHeight: 1.5,
           }}
         >
           {description}

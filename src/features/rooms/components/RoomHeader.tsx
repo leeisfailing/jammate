@@ -43,9 +43,10 @@ export function RoomHeader({ onSearch }: RoomHeaderProps) {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "12px 20px",
+        padding: "12px 24px",
         borderBottom: "1px solid var(--color-border)",
         flexShrink: 0,
+        background: "var(--color-bg)",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
@@ -54,22 +55,26 @@ export function RoomHeader({ onSearch }: RoomHeaderProps) {
           style={{
             fontSize: "13px",
             color: "var(--color-text-muted)",
+            transition: "color 0.15s",
           }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = "var(--color-text)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = "var(--color-text-muted)"; }}
         >
           ← Back
         </button>
 
         {currentRoom && (
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <span
               style={{
                 fontSize: "12px",
                 fontFamily: "monospace",
                 color: "var(--color-primary)",
-                background: "var(--color-surface)",
-                padding: "4px 10px",
+                background: "var(--color-primary-dim)",
+                padding: "4px 12px",
                 borderRadius: "var(--radius-sm)",
-                letterSpacing: "1px",
+                letterSpacing: "1.5px",
+                fontWeight: 600,
               }}
             >
               {currentRoom.room_code}

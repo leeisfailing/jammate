@@ -69,25 +69,28 @@ export function LoginPage() {
       <div
         style={{
           width: "100%",
-          maxWidth: "380px",
+          maxWidth: "400px",
           padding: "32px",
+          animation: "fadeIn 0.3s ease-out",
         }}
       >
-        <div style={{ textAlign: "center", marginBottom: "32px" }}>
+        <div style={{ textAlign: "center", marginBottom: "40px" }}>
           <h1
             style={{
-              fontSize: "28px",
-              fontWeight: 700,
-              color: "var(--color-text)",
+              fontSize: "36px",
+              fontWeight: 800,
+              color: "var(--color-primary)",
               marginBottom: "8px",
+              letterSpacing: "-1px",
             }}
           >
             JamMate
           </h1>
           <p
             style={{
-              fontSize: "14px",
+              fontSize: "15px",
               color: "var(--color-text-muted)",
+              lineHeight: 1.5,
             }}
           >
             Listen together, remotely.

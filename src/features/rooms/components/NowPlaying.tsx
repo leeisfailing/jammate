@@ -86,15 +86,17 @@ export function NowPlaying() {
     >
       <div
         style={{
-          width: "200px",
-          height: "200px",
-          borderRadius: "var(--radius-lg)",
+          width: "220px",
+          height: "220px",
+          borderRadius: "var(--radius-xl)",
           background: "var(--color-surface)",
           overflow: "hidden",
-          marginBottom: "20px",
+          marginBottom: "24px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          boxShadow: "0 20px 40px -12px rgba(0, 0, 0, 0.5)",
+          border: "1px solid var(--color-border)",
         }}
       >
         {albumImage ? (
@@ -116,10 +118,11 @@ export function NowPlaying() {
 
       <h2
         style={{
-          fontSize: "18px",
-          fontWeight: 600,
-          marginBottom: "4px",
+          fontSize: "20px",
+          fontWeight: 700,
+          marginBottom: "6px",
           textAlign: "center",
+          letterSpacing: "-0.3px",
         }}
       >
         {trackName}
@@ -143,11 +146,12 @@ export function NowPlaying() {
         <div
           style={{
             width: "100%",
-            height: "3px",
-            background: "var(--color-surface)",
+            height: "4px",
+            background: "var(--color-surface-hover)",
             borderRadius: "2px",
             overflow: "hidden",
-            marginBottom: "4px",
+            marginBottom: "8px",
+            cursor: "pointer",
           }}
         >
           <div
@@ -157,6 +161,7 @@ export function NowPlaying() {
               background: "var(--color-primary)",
               borderRadius: "2px",
               transition: "width 1s linear",
+              boxShadow: "0 0 8px var(--color-glow)",
             }}
           />
         </div>

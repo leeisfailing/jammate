@@ -129,7 +129,7 @@ export function Queue({ onAddSong }: QueueProps) {
         </Button>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
         {queue.map((item, index) => {
           const hasVoted = userVotes.has(item.id);
           const albumImage = item.album_image_url;
@@ -141,16 +141,18 @@ export function Queue({ onAddSong }: QueueProps) {
                 display: "flex",
                 alignItems: "center",
                 gap: "12px",
-                padding: "8px 12px",
-                borderRadius: "var(--radius-md)",
+                padding: "10px 12px",
+                borderRadius: "var(--radius-lg)",
                 background: "var(--color-surface)",
-                transition: "background 0.15s",
+                transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = "var(--color-surface-hover)";
+                e.currentTarget.style.transform = "translateX(2px)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = "var(--color-surface)";
+                e.currentTarget.style.transform = "translateX(0)";
               }}
             >
               <span
@@ -225,18 +227,21 @@ export function Queue({ onAddSong }: QueueProps) {
                   display: "flex",
                   alignItems: "center",
                   gap: "4px",
-                  padding: "4px 8px",
+                  padding: "4px 10px",
                   borderRadius: "var(--radius-sm)",
                   fontSize: "12px",
+                  fontWeight: 500,
                   color: hasVoted
                     ? "var(--color-primary)"
                     : "var(--color-text-muted)",
                   background: hasVoted
-                    ? "rgba(29, 185, 84, 0.1)"
+                    ? "var(--color-primary-dim)"
                     : "transparent",
-                  border: "none",
+                  border: hasVoted
+                    ? "1px solid var(--color-primary)"
+                    : "1px solid transparent",
                   cursor: "pointer",
-                  transition: "color 0.15s, background 0.15s",
+                  transition: "all 0.2s",
                 }}
               >
                 ▲ {item.vote_count}

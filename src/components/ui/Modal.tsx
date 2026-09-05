@@ -18,21 +18,24 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "rgba(0, 0, 0, 0.7)",
+        background: "rgba(0, 0, 0, 0.8)",
+        backdropFilter: "blur(4px)",
         zIndex: 1000,
+        animation: "fadeIn 0.15s ease-out",
       }}
       onClick={onClose}
     >
       <div
         style={{
           background: "var(--color-surface)",
-          borderRadius: "var(--radius-lg)",
+          borderRadius: "var(--radius-xl)",
           padding: "24px",
           width: "100%",
           maxWidth: "480px",
           maxHeight: "80vh",
           overflow: "auto",
           border: "1px solid var(--color-border)",
+          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -42,17 +45,30 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginBottom: "16px",
+              marginBottom: "20px",
             }}
           >
-            <h2 style={{ fontSize: "18px", fontWeight: 600 }}>{title}</h2>
+            <h2 style={{ fontSize: "18px", fontWeight: 700 }}>{title}</h2>
             <button
               onClick={onClose}
               style={{
-                fontSize: "20px",
+                width: "28px",
+                height: "28px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "var(--radius-sm)",
+                fontSize: "18px",
                 color: "var(--color-text-muted)",
-                cursor: "pointer",
-                padding: "4px",
+                transition: "all 0.15s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "var(--color-surface-hover)";
+                e.currentTarget.style.color = "var(--color-text)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = "var(--color-text-muted)";
               }}
             >
               ×

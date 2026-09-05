@@ -24,29 +24,34 @@ export function Layout() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "0 20px",
-          height: "52px",
+          padding: "0 24px",
+          height: "56px",
           borderBottom: "1px solid var(--color-border)",
           flexShrink: 0,
+          background: "var(--color-bg)",
+          backdropFilter: "blur(12px)",
         }}
       >
         <div
-          style={{ display: "flex", alignItems: "center", gap: "24px" }}
+          style={{ display: "flex", alignItems: "center", gap: "28px" }}
         >
           <button
             onClick={() => navigate("/")}
             style={{
-              fontSize: "16px",
-              fontWeight: 700,
+              fontSize: "17px",
+              fontWeight: 800,
               color: "var(--color-primary)",
-              letterSpacing: "-0.3px",
+              letterSpacing: "-0.5px",
+              transition: "opacity 0.15s",
             }}
+            onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.8"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
           >
             JamMate
           </button>
 
           {!isInRoom && (
-            <nav style={{ display: "flex", gap: "4px" }}>
+            <nav style={{ display: "flex", gap: "2px" }}>
               <NavButton
                 active={location.pathname === "/"}
                 onClick={() => navigate("/")}
@@ -63,15 +68,17 @@ export function Layout() {
           )}
 
           {isInRoom && currentRoom && (
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <span
                 style={{
                   fontSize: "12px",
-                  color: "var(--color-text-muted)",
+                  color: "var(--color-primary)",
                   fontFamily: "monospace",
-                  background: "var(--color-surface)",
-                  padding: "2px 8px",
+                  background: "var(--color-primary-dim)",
+                  padding: "3px 10px",
                   borderRadius: "var(--radius-sm)",
+                  letterSpacing: "1.5px",
+                  fontWeight: 600,
                 }}
               >
                 {currentRoom.room_code}
@@ -86,6 +93,7 @@ export function Layout() {
               style={{
                 fontSize: "13px",
                 color: "var(--color-text-muted)",
+                fontWeight: 500,
               }}
             >
               {displayName}
@@ -120,13 +128,13 @@ function NavButton({
     <button
       onClick={onClick}
       style={{
-        padding: "6px 12px",
-        borderRadius: "var(--radius-sm)",
+        padding: "6px 14px",
+        borderRadius: "var(--radius-md)",
         fontSize: "13px",
         fontWeight: 500,
         color: active ? "var(--color-text)" : "var(--color-text-muted)",
         background: active ? "var(--color-surface)" : "transparent",
-        transition: "background 0.15s, color 0.15s",
+        transition: "all 0.15s",
       }}
       onMouseEnter={(e) => {
         if (!active) {
@@ -154,6 +162,7 @@ function ConnectionDot() {
         height: "8px",
         borderRadius: "50%",
         background: "var(--color-primary)",
+        boxShadow: "0 0 8px var(--color-glow)",
       }}
     />
   );
