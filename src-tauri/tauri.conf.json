@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "identifier": "com.jammate.app",
   "build": {
-    "beforeDevCommand": "pnpm dev",
-    "beforeBuildCommand": "pnpm build",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
     "devUrl": "http://localhost:5173",
     "frontendDist": "../dist"
   },
@@ -13,6 +13,7 @@
     "withGlobalTauri": false,
     "windows": [
       {
+        "label": "main",
         "title": "JamMate",
         "width": 1200,
         "height": 800,

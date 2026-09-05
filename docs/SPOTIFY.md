@@ -28,10 +28,10 @@ user-read-private
 ### Redirect URI
 
 ```
-jammate://callback
+http://127.0.0.1:8888/callback
 ```
 
-This is a custom deep-link scheme registered by the Tauri app.
+JamMate uses the Spotify-required loopback address (not `localhost`). Add this exact URI in the Spotify Developer Dashboard. During connect, Rust binds that port, opens the system browser, then exchanges the authorization code for tokens.
 
 ## Token Management
 

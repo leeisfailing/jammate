@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { listen } from "@tauri-apps/api/event";
 import { useAuthStore } from "@/stores/authStore";
 import { usePlayerStore } from "@/stores/playerStore";
 import { SPOTIFY_CONFIG } from "@/lib/spotify/config";
@@ -19,6 +20,14 @@ export function SettingsPage() {
   const [spotifyName, setSpotifyName] = useState<string | null>(null);
   const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState("");
+  const connectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearConnectTimeout = () => {
+    if (connectTimeoutRef.current) {
+      clearTimeout(connectTimeoutRef.current);
+      connectTimeoutRef.current = null;
+    }
+  };
 
   useEffect(() => {
     const checkSpotify = async () => {
@@ -34,47 +43,58 @@ export function SettingsPage() {
       }
     };
     checkSpotify();
+
+    const unlistenComplete = listen<boolean>("spotify-auth-complete", async () => {
+      clearConnectTimeout();
+      try {
+        const token = await getStoredSpotifyToken();
+        if (token) {
+          setSpotifyConnected(true);
+          setSpotifyAccessToken(token.access_token);
+          setSpotifyName("Connected");
+          setConnecting(false);
+          setError("");
+        }
+      } catch {
+        setConnecting(false);
+      }
+    });
+
+    const unlistenError = listen<string>("spotify-auth-error", (event) => {
+      clearConnectTimeout();
+      setError(event.payload);
+      setConnecting(false);
+    });
+
+    return () => {
+      clearConnectTimeout();
+      unlistenComplete.then((fn) => fn());
+      unlistenError.then((fn) => fn());
+    };
   }, [setSpotifyAccessToken]);
 
   const handleConnectSpotify = async () => {
     setConnecting(true);
     setError("");
+    clearConnectTimeout();
+    connectTimeoutRef.current = setTimeout(() => {
+      setError("Spotify connection timed out. Please try again.");
+      setConnecting(false);
+    }, 180_000);
+
     try {
-      const result = await startSpotifyAuth(
+      await startSpotifyAuth(
         SPOTIFY_CONFIG.clientId,
         SPOTIFY_CONFIG.redirectUri
       );
-
-      window.open(result.auth_url, "_blank");
-
-      const pollAuth = async () => {
-        const maxAttempts = 120;
-        for (let i = 0; i < maxAttempts; i++) {
-          await new Promise((r) => setTimeout(r, 1000));
-          try {
-            const token = await getStoredSpotifyToken();
-            if (token) {
-              setSpotifyConnected(true);
-              setSpotifyAccessToken(token.access_token);
-              setSpotifyName("Connected");
-              return;
-            }
-          } catch {
-            // Continue polling
-          }
-        }
-        setError("Spotify connection timed out. Please try again.");
-      };
-
-      pollAuth();
     } catch (err) {
+      clearConnectTimeout();
+      setConnecting(false);
       setError(
         err instanceof Error
           ? err.message
           : "Failed to start Spotify connection."
       );
-    } finally {
-      setConnecting(false);
     }
   };
 
@@ -104,6 +124,7 @@ export function SettingsPage() {
         maxWidth: "480px",
         margin: "0 auto",
         padding: "48px 24px",
+        animation: "fadeIn 0.3s ease-out",
       }}
     >
       <button
@@ -158,18 +179,19 @@ export function SettingsPage() {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "8px",
+                  gap: "10px",
                 }}
               >
                 <div
                   style={{
-                    width: "8px",
-                    height: "8px",
+                    width: "10px",
+                    height: "10px",
                     borderRadius: "50%",
                     background: "var(--color-primary)",
+                    boxShadow: "0 0 8px var(--color-glow)",
                   }}
                 />
-                <span style={{ fontSize: "14px" }}>
+                <span style={{ fontSize: "14px", fontWeight: 500 }}>
                   {spotifyName ?? "Connected to Spotify"}
                 </span>
               </div>
@@ -213,8 +235,18 @@ export function SettingsPage() {
                 disabled={connecting}
                 style={{ alignSelf: "flex-start" }}
               >
-                {connecting ? "Connecting..." : "Connect Spotify"}
+                {connecting ? "Waiting for Spotify..." : "Connect Spotify"}
               </Button>
+              {connecting && (
+                <p
+                  style={{
+                    fontSize: "13px",
+                    color: "var(--color-text-muted)",
+                  }}
+                >
+                  Finish signing in with Spotify in your browser.
+                </p>
+              )}
             </div>
           )}
 

@@ -24,7 +24,7 @@ Copy `.env.example` to `.env` and fill in:
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 VITE_SPOTIFY_CLIENT_ID=your-spotify-client-id
-VITE_SPOTIFY_REDIRECT_URI=http://127.0.0.1:8080/callback
+VITE_SPOTIFY_REDIRECT_URI=http://127.0.0.1:8888/callback
 ```
 
 ### 3. Supabase local development (optional)

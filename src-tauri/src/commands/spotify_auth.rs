@@ -1,6 +1,8 @@
+use std::sync::Mutex;
+
 use reqwest::Client;
 use serde::Serialize;
-use tauri::command;
+use tauri::{command, AppHandle, Emitter};
 
 use crate::auth::pkce;
 use crate::spotify::models::SpotifyUserProfile;
@@ -13,8 +15,20 @@ pub struct AuthStartResult {
     pub code_verifier: String,
 }
 
+pub struct PendingAuth {
+    pub code_verifier: String,
+    pub client_id: String,
+    pub redirect_uri: String,
+}
+
+pub static PENDING_AUTH: Mutex<Option<PendingAuth>> = Mutex::new(None);
+
 #[command]
-pub async fn start_spotify_auth(client_id: String, redirect_uri: String) -> Result<AuthStartResult, String> {
+pub async fn start_spotify_auth(
+    app: AppHandle,
+    client_id: String,
+    redirect_uri: String,
+) -> Result<AuthStartResult, String> {
     let code_verifier = pkce::generate_code_verifier();
     let code_challenge = pkce::generate_code_challenge(&code_verifier);
 
@@ -26,6 +40,44 @@ pub async fn start_spotify_auth(client_id: String, redirect_uri: String) -> Resu
         &code_challenge,
         scopes,
     );
+
+    {
+        let mut pending = PENDING_AUTH.lock().map_err(|e| format!("Lock error: {e}"))?;
+        *pending = Some(PendingAuth {
+            code_verifier: code_verifier.clone(),
+            client_id: client_id.clone(),
+            redirect_uri: redirect_uri.clone(),
+        });
+    }
+
+    if crate::auth::loopback::is_loopback_redirect(&redirect_uri) {
+        let listener = crate::auth::loopback::bind(&redirect_uri).await?;
+        let expected_path = crate::auth::loopback::callback_path(&redirect_uri)?;
+        crate::auth::browser::open(&auth_url)?;
+
+        let handle = app.clone();
+        let verifier = code_verifier.clone();
+        let redirect = redirect_uri.clone();
+        let cid = client_id.clone();
+
+        tauri::async_runtime::spawn(async move {
+            match crate::auth::loopback::accept_auth_code(listener, &expected_path).await {
+                Ok(code) => match complete_spotify_auth(code, verifier, redirect, cid).await {
+                    Ok(_) => {
+                        let _ = handle.emit("spotify-auth-complete", true);
+                    }
+                    Err(e) => {
+                        let _ = handle.emit("spotify-auth-error", e);
+                    }
+                },
+                Err(e) => {
+                    let _ = handle.emit("spotify-auth-error", e);
+                }
+            }
+        });
+    } else if let Err(e) = crate::auth::browser::open(&auth_url) {
+        return Err(e);
+    }
 
     Ok(AuthStartResult {
         auth_url,
@@ -74,9 +126,12 @@ pub async fn complete_spotify_auth(
 
 #[command]
 pub async fn refresh_spotify_token(client_id: String) -> Result<String, String> {
-    let token_data = secure_store::get_stored_token()
-        .map_err(|e| e)?
+    let token_data = secure_store::get_stored_token()?
         .ok_or_else(|| "No stored token".to_string())?;
+
+    if !secure_store::is_token_expired(&token_data) {
+        return Ok(token_data.access_token);
+    }
 
     let refresh = token_data
         .refresh_token
